@@ -1,0 +1,150 @@
+.web2pdf-floating-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.web2pdf-floating-button svg {
+  width: 32px;
+  height: 32px;
+}
+
+.web2pdf-floating-button:hover {
+  transform: scale(1.1);
+  background-color: #45a049;
+}
+
+.web2pdf-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 10001;
+  width: 400px;
+}
+
+.web2pdf-modal.show {
+  display: block;
+}
+
+.web2pdf-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 10000;
+}
+
+.web2pdf-overlay.show {
+  display: block;
+}
+
+.web2pdf-modal .options {
+  margin: 20px 0;
+}
+
+.web2pdf-modal label {
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.web2pdf-modal .font-size {
+  margin: 15px 0;
+}
+
+.web2pdf-modal select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.web2pdf-modal .buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.web2pdf-modal button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.web2pdf-modal #generatePDF {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.web2pdf-modal #cancel {
+  background-color: #f0f0f0;
+}
+
+.web2pdf-modal button:hover {
+  opacity: 0.9;
+}
+
+.web2pdf-close-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  z-index: 10000;
+}
+
+.web2pdf-close-button:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.web2pdf-close-button svg {
+  width: 24px;
+  height: 24px;
+  color: #666;
+}
+
+.web2pdf-close-button span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 添加按钮点击效果 */
+.web2pdf-close-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+} 

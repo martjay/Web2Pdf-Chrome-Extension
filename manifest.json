@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Web2PDF",
+  "version": "1.0",
+  "description": "将网页转换为PDF，支持自定义样式和批量导出",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "Web2PDF"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "lib/html2pdf.bundle.min.js",
+        "i18n.js",
+        "content.js"
+      ],
+      "css": ["styles.css"]
+    }
+  ]
+}
