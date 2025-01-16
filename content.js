@@ -34,12 +34,10 @@ function createFloatingButton() {
     isDragging = true;
     button.style.transition = 'none';
     
-    // 获取当前位置
     const rect = button.getBoundingClientRect();
     initialX = e.clientX - rect.left;
     initialY = e.clientY - rect.top;
     
-    // 添加拖动时的样式
     button.classList.add('dragging');
   });
 
@@ -48,19 +46,17 @@ function createFloatingButton() {
 
     e.preventDefault();
     
-    // 计算新位置
     currentX = e.clientX - initialX;
     currentY = e.clientY - initialY;
     
-    // 限制在视窗内
     const buttonRect = button.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
+    // 优化边界处理逻辑
     currentX = Math.max(0, Math.min(currentX, viewportWidth - buttonRect.width));
     currentY = Math.max(0, Math.min(currentY, viewportHeight - buttonRect.height));
     
-    // 更新位置
     button.style.left = currentX + 'px';
     button.style.top = currentY + 'px';
     button.style.bottom = 'auto';
@@ -73,7 +69,7 @@ function createFloatingButton() {
     button.style.transition = 'background-color 0.2s';
     button.classList.remove('dragging');
     
-    // 保存新位置
+    // 保存新位置到 storage，这样主页面的按钮也会使用这个位置
     chrome.storage.local.set({
       buttonPosition: {
         left: button.style.left,
