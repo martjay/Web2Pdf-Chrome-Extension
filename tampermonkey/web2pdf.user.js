@@ -4,7 +4,7 @@
 // @name:zh-TW   Web2PDF 網頁轉檔PDF
 // @namespace    http://tampermonkey.net/
 // @version      1.1
-// @description  Convert web pages to PDF with support for reading mode, editing, and custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
+// @description Convert web pages to PDF with support for reading mode, editing, 和 custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-CN  将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-TW  將網頁轉檔PDF，支援閱讀模式、編輯和自定義樣式。
 // @author       martjay
@@ -447,8 +447,34 @@
                 <svg viewBox="0 0 24 24" width="24" height="24">
                     <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                 </svg>
-                <span>${await t('close')}</span>
+                <span style="font-size: 12px;">ESC</span>
             `;
+            closeButton.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                background: #f0f0f0;
+                cursor: pointer;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: background-color 0.3s, transform 0.3s;
+                z-index: 2147483647;
+            `;
+            closeButton.addEventListener('mouseover', () => {
+                closeButton.style.backgroundColor = '#e0e0e0';
+                closeButton.style.transform = 'scale(1.1)';
+            });
+            closeButton.addEventListener('mouseout', () => {
+                closeButton.style.backgroundColor = '#f0f0f0';
+                closeButton.style.transform = 'scale(1)';
+            });
             closeButton.addEventListener('click', () => {
                 readerMode.remove();
                 document.body.style.overflow = '';
