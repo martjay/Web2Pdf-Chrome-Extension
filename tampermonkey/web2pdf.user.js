@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name         Web2PDF
-// @name:zh-CN   网页转PDF
-// @name:zh-TW   網頁轉換為PDF
+// @name         Web2PDF 网页转PDF
+// @name:zh-CN   Web2PDF 网页转PDF
+// @name:zh-TW   Web2PDF 網頁轉檔PDF
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Convert web pages to PDF with support for reading mode, editing, and custom styles.
+// @version      1.1
+// @description  Convert web pages to PDF with support for reading mode, editing, and custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-CN  将网页转换为PDF，支持阅读模式、编辑和自定义样式。
-// @description:zh-TW  將網頁轉換為PDF，支援閱讀模式、編輯和自定義樣式。
+// @description:zh-TW  將網頁轉檔PDF，支援閱讀模式、編輯和自定義樣式。
 // @author       martjay
 // @match        *://*/*
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZmlsbD0iIzRDQUY1MCIgZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yem0tOC41IDcuNWMwIC44My0uNjcgMS41LTEuNSAxLjVIOXYySDcuNVY3SDEwYy44MyAwIDEuNS42NyAxLjUgMS41djF6bTUgMmMwIC44My0uNjcgMS41LTEuNSAxLjVoLTIuNVY3SDE1Yy44MyAwIDEuNS42NyAxLjUgMS41djN6bTQtM0gxOXYxaDEuNVYxMUgxOXYyaC0xLjVWN2gzdjEuNXpNOSA5LjVoMXYtMUg5djF6TTQgNkgydjE0YzAgMS4xLjkgMiAyIDJoMTR2LTJINFY2em0xMCA1LjVoMXYtM2gtMXYzeiIvPjwvc3ZnPg==
@@ -16,8 +16,8 @@
 // @license      GPL-3.0 License
 // @require      https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
-// @downloadURL https://update.greasyfork.org/scripts/523995/Web2PDF.user.js
-// @updateURL https://update.greasyfork.org/scripts/523995/Web2PDF.meta.js
+// @downloadURL https://update.greasyfork.org/scripts/523995/Web2PDF%20%E7%BD%91%E9%A1%B5%E8%BD%ACPDF.user.js
+// @updateURL https://update.greasyfork.org/scripts/523995/Web2PDF%20%E7%BD%91%E9%A1%B5%E8%BD%ACPDF.meta.js
 // ==/UserScript==
 
 (function() {
