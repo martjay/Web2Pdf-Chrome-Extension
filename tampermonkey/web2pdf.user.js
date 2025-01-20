@@ -3,13 +3,13 @@
 // @name:zh-CN   Web2PDF 网页转PDF
 // @name:zh-TW   Web2PDF 網頁轉檔PDF
 // @namespace    http://tampermonkey.net/
-// @version      1.1
-// @description Convert web pages to PDF with support for reading mode, editing, 和 custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
+// @version      1.3
+// @description  Convert web pages to PDF with support for reading mode, editing, and custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-CN  将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-TW  將網頁轉檔PDF，支援閱讀模式、編輯和自定義樣式。
 // @author       martjay
 // @match        *://*/*
-// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZmlsbD0iIzRDQUY1MCIgZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yem0tOC41IDcuNWMwIC44My0uNjcgMS41LTEuNSAxLjVIOXYySDcuNVY3SDEwYy44MyAwIDEuNS42NyAxLjUgMS41djF6bTUgMmMwIC44My0uNjcgMS41LTEuNSAxLjVoLTIuNVY3SDE1Yy44MyAwIDEuNS42NyAxLjUgMS41djN6bTQtM0gxOXYxaDEuNVYxMUgxOXYyaC0xLjVWN2gzdjEuNXpNOSA5LjVoMXYtMUg5djF6TTQgNkgydjE0YzAgMS4xLjkgMiAyIDJoMTR2LTJINFY2em0xMCA1LjVoMXYtM2gtMXYzeiIvPjwvc3ZnPg==
+// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZmlsbD0iIzRDQUY1MCIgZD0iTTIwIDJIOGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxMmMxLjEgMCAyLS45IDItMlY0YzAtMS4xLS45LTItMi0yem0tOC41IDcuNWMwIC44My0uNjcgMS41LTEuNSAxLjVIOXYySDcuNVY3SDEwYy44MyAwIDEuNS42NyAxLjUgMS41djF6bTUgMmMwIC44My0uNjcgMS41LTEuNSAxLjVoLTIuNVY3SDE1Yy44MyAwIDEuNS42NyAxLjUgMS41djN6bTQtM0gxOXYxaDEuNVYxMUgxOHYyaC0xLjVWN2gzdjEuNXpNOSA5LjVoMXYtMUg5djF6TTQgNkgydjE0YzAgMS4xLjkgMiAyIDJoMTR2LTJINFY2em0xMCA1LjVoMXYtM2gtMXYzeiIvPjwvc3ZnPg==
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_addStyle
@@ -110,10 +110,11 @@
     }
 
     // 添加样式
-    GM_addStyle(`
+    const style = document.createElement('style');
+    style.textContent = `
         .web2pdf-floating-button {
             position: fixed;
-            z-index: 10000;
+            z-index: 2147483647;
             width: 48px;
             height: 48px;
             border-radius: 24px;
@@ -139,13 +140,18 @@
             cursor: grabbing;
         }
 
+        .web2pdf-floating-button svg {
+            pointer-events: none;
+            fill: currentColor;
+        }
+
         .web2pdf-menu {
             position: fixed;
             background: white;
             border-radius: 4px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: none;
-            z-index: 10001;
+            z-index: 2147483646;
             min-width: 180px;
             max-width: 250px;
         }
@@ -169,6 +175,11 @@
             background-color: #f5f5f5;
         }
 
+        .menu-item svg {
+            flex-shrink: 0;
+            fill: currentColor;
+        }
+
         .web2pdf-reader-mode {
             position: fixed;
             top: 0;
@@ -176,11 +187,64 @@
             right: 0;
             bottom: 0;
             background: white;
-            z-index: 100000;
+            z-index: 2147483645;
             padding: 40px;
             overflow-y: auto;
             line-height: 1.6;
             font-family: Arial, sans-serif;
+        }
+
+        .web2pdf-reader-mode .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .reader-close-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483646;
+        }
+
+        .reader-close-button:hover {
+            background: #e0e0e0;
+        }
+
+        .web2pdf-context-menu {
+            position: fixed;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 2147483645;
+            min-width: 150px;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .context-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .web2pdf-reader-mode .web2pdf-floating-button {
+            z-index: 2147483647;
         }
 
         .web2pdf-content.editing {
@@ -197,7 +261,7 @@
             border-radius: 4px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 5px;
-            z-index: 100002;
+            z-index: 2147483646;
             display: flex;
             gap: 5px;
         }
@@ -216,6 +280,14 @@
             transition: background-color 0.2s;
         }
 
+        .editing-toolbar button:hover {
+            background: #e0e0e0;
+        }
+
+        [contenteditable=true]:focus {
+            outline: none;
+        }
+
         .element-controls {
             position: absolute;
             top: 0;
@@ -223,6 +295,23 @@
             display: none;
             background: rgba(0, 0, 0, 0.1);
             border-radius: 4px;
+        }
+
+        [contenteditable=true] *:hover > .element-controls {
+            display: block;
+        }
+
+        .element-controls button {
+            padding: 2px 6px;
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .element-controls button:hover {
+            background: rgba(255, 0, 0, 0.1);
         }
 
         .image-wrapper {
@@ -241,7 +330,22 @@
             cursor: se-resize;
             display: none;
         }
-    `);
+
+        [contenteditable=true] .image-wrapper:hover .image-resizer {
+            display: block;
+        }
+
+        #switchLang {
+            border-top: 1px solid #eee;
+            margin-top: 5px;
+            padding-top: 10px;
+        }
+
+        #switchLang svg {
+            transform: scale(0.9);
+        }
+    `;
+    document.head.appendChild(style);
 
     // 原有的功能函数
     // 将 content.js 的代码粘贴到这里
@@ -256,10 +360,28 @@
             </svg>
         `;
 
-        // 从存储中获取保存的位置
+        // 设置初始位置
         const buttonPosition = GM_getValue('buttonPosition', { left: '20px', top: '20px' });
-        button.style.left = buttonPosition.left;
-        button.style.top = buttonPosition.top;
+        button.style.cssText = `
+            left: ${buttonPosition.left};
+            top: ${buttonPosition.top};
+            position: fixed;
+            z-index: 2147483647;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            user-select: none;
+            touch-action: none;
+            color: #333;
+        `;
 
         // 添加拖动功能
         let isDragging = false;
@@ -293,7 +415,6 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             
-            // 优化边界处理逻辑
             currentX = Math.max(0, Math.min(currentX, viewportWidth - buttonRect.width));
             currentY = Math.max(0, Math.min(currentY, viewportHeight - buttonRect.height));
             
@@ -309,7 +430,6 @@
             button.style.transition = 'background-color 0.2s';
             button.classList.remove('dragging');
             
-            // 保存新位置到 storage，这样主页面的按钮也会使用这个位置
             GM_setValue('buttonPosition', {
                 left: button.style.left,
                 top: button.style.top
@@ -317,7 +437,13 @@
         });
 
         button.addEventListener('click', showMenu);
-        document.body.appendChild(button);
+        
+        // 确保按钮被添加到页面
+        if (!document.body.contains(button)) {
+            document.body.appendChild(button);
+        }
+
+        return button;
     }
 
     // 创建菜单
@@ -1129,268 +1255,6 @@
         return element.innerHTML;
     }
 
-    // 添加样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .web2pdf-floating-button {
-            position: fixed;
-            z-index: 10000;
-            width: 48px;
-            height: 48px;
-            border-radius: 24px;
-            background: white;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            cursor: move;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-            user-select: none;
-            touch-action: none;
-            color: #333;
-        }
-
-        .web2pdf-floating-button:hover {
-            background: #f5f5f5;
-        }
-
-        .web2pdf-floating-button.dragging {
-            opacity: 0.8;
-            cursor: grabbing;
-        }
-
-        .web2pdf-floating-button svg {
-            pointer-events: none;
-            fill: currentColor;
-        }
-
-        .web2pdf-menu {
-            position: fixed;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 10001;
-            min-width: 180px;
-            max-width: 250px;
-        }
-
-        .web2pdf-menu.show {
-            display: block;
-        }
-
-        .menu-item {
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: #333;
-            transition: background-color 0.2s;
-            white-space: nowrap;
-        }
-
-        .menu-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .menu-item svg {
-            flex-shrink: 0;
-            fill: currentColor;
-        }
-
-        .web2pdf-reader-mode {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: white;
-            z-index: 100000;
-            padding: 40px;
-            overflow-y: auto;
-            line-height: 1.6;
-            font-family: Arial, sans-serif;
-        }
-
-        .web2pdf-reader-mode .content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .reader-close-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            border: none;
-            background: #f0f0f0;
-            cursor: pointer;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100001;
-        }
-
-        .reader-close-button:hover {
-            background: #e0e0e0;
-        }
-
-        .web2pdf-context-menu {
-            position: fixed;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 10000;
-            min-width: 150px;
-        }
-
-        .context-menu-item {
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .context-menu-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .web2pdf-reader-mode .web2pdf-floating-button {
-            z-index: 100002;
-        }
-
-        .web2pdf-content.editing {
-            outline: 2px solid #4CAF50;
-            padding: 10px;
-        }
-
-        .editing-toolbar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 5px;
-            z-index: 100002;
-            display: flex;
-            gap: 5px;
-        }
-
-        .editing-toolbar button {
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: #f0f0f0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-
-        .editing-toolbar button:hover {
-            background: #e0e0e0;
-        }
-
-        [contenteditable=true]:focus {
-            outline: none;
-        }
-
-        .element-controls {
-            position: absolute;
-            top: 0;
-            right: 0;
-            display: none;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-
-        [contenteditable=true] *:hover > .element-controls {
-            display: block;
-        }
-
-        .element-controls button {
-            padding: 2px 6px;
-            background: none;
-            border: none;
-            color: #ff4444;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .element-controls button:hover {
-            background: rgba(255, 0, 0, 0.1);
-        }
-
-        .image-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .image-resizer {
-            position: absolute;
-            right: -5px;
-            bottom: -5px;
-            width: 10px;
-            height: 10px;
-            background: #4CAF50;
-            border-radius: 50%;
-            cursor: se-resize;
-            display: none;
-        }
-
-        [contenteditable=true] .image-wrapper:hover .image-resizer {
-            display: block;
-        }
-
-        #switchLang {
-            border-top: 1px solid #eee;
-            margin-top: 5px;
-            padding-top: 10px;
-        }
-
-        #switchLang svg {
-            transform: scale(0.9);
-        }
-    `;
-    document.head.appendChild(style);
-
-    // 添加窗口大小改变时的处理
-    window.addEventListener('resize', function() {
-        const button = document.querySelector('.web2pdf-floating-button');
-        if (!button) return;
-
-        const rect = button.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        // 如果按钮位置超出视窗，调整到可见区域
-        if (rect.right > viewportWidth) {
-            button.style.left = (viewportWidth - rect.width) + 'px';
-        }
-        if (rect.bottom > viewportHeight) {
-            button.style.top = (viewportHeight - rect.height) + 'px';
-        }
-
-        // 保存调整后的位置
-        GM_setValue('buttonPosition', {
-            left: button.style.left,
-            top: button.style.top
-        });
-    });
-
     // 提取主要内容
     function extractMainContent() {
         // 尝试查找主要内容容器
@@ -1628,16 +1492,69 @@
         });
     }
 
-    // 将初始化代码包装在一个函数中
+    // 修改初始化函数
     function initializeExtension() {
-        createFloatingButton();
-        createMenu();
+        // 确保只初始化一次
+        if (document.querySelector('.web2pdf-floating-button')) {
+            return;
+        }
+
+        // 确保body存在
+        if (!document.body) {
+            setTimeout(initializeExtension, 100);
+            return;
+        }
+        
+        try {
+            // 创建并添加浮动按钮
+            const button = createFloatingButton();
+            
+            // 创建菜单
+            createMenu();
+            
+            // 添加窗口大小改变事件监听
+            window.addEventListener('resize', function() {
+                if (!button) return;
+
+                const rect = button.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                if (rect.right > viewportWidth) {
+                    button.style.left = (viewportWidth - rect.width) + 'px';
+                }
+                if (rect.bottom > viewportHeight) {
+                    button.style.top = (viewportHeight - rect.height) + 'px';
+                }
+
+                GM_setValue('buttonPosition', {
+                    left: button.style.left,
+                    top: button.style.top
+                });
+            });
+
+            console.log('Web2PDF Extension initialized successfully');
+        } catch (error) {
+            console.error('Error initializing Web2PDF Extension:', error);
+        }
     }
 
-    // 等待 DOM 和 i18n 加载完成后初始化
+    // 确保在页面加载完成后初始化
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeExtension);
     } else {
         initializeExtension();
     }
+
+    // 添加 MutationObserver 以处理动态加载的页面
+    const observer = new MutationObserver(function(mutations) {
+        if (!document.querySelector('.web2pdf-floating-button')) {
+            initializeExtension();
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
 })(); 
