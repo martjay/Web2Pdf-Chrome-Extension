@@ -3,7 +3,7 @@
 // @name:zh-CN   Web2PDF 网页转PDF
 // @name:zh-TW   Web2PDF 網頁轉檔PDF
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @description  Convert web pages to PDF with support for reading mode, editing, and custom styles.将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-CN  将网页转换为PDF，支持阅读模式、编辑和自定义样式。
 // @description:zh-TW  將網頁轉檔PDF，支援閱讀模式、編輯和自定義樣式。
@@ -110,8 +110,7 @@
     }
 
     // 添加样式
-    const style = document.createElement('style');
-    style.textContent = `
+    GM_addStyle(`
         .web2pdf-floating-button {
             position: fixed;
             z-index: 2147483647;
@@ -129,6 +128,8 @@
             user-select: none;
             touch-action: none;
             color: #333;
+            left: 20px;
+            bottom: 20px;
         }
 
         .web2pdf-floating-button:hover {
@@ -344,14 +345,19 @@
         #switchLang svg {
             transform: scale(0.9);
         }
-    `;
-    document.head.appendChild(style);
+    `);
 
     // 原有的功能函数
     // 将 content.js 的代码粘贴到这里
     // 创建浮动按钮和菜单
     function createFloatingButton() {
-        const button = document.createElement('button');
+        // 检查是否已存在按钮
+        let button = document.querySelector('.web2pdf-floating-button');
+        if (button) {
+            return button;
+        }
+
+        button = document.createElement('button');
         button.className = 'web2pdf-floating-button';
         button.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -361,27 +367,9 @@
         `;
 
         // 设置初始位置
-        const buttonPosition = GM_getValue('buttonPosition', { left: '20px', top: '20px' });
-        button.style.cssText = `
-            left: ${buttonPosition.left};
-            top: ${buttonPosition.top};
-            position: fixed;
-            z-index: 2147483647;
-            width: 48px;
-            height: 48px;
-            border-radius: 24px;
-            background: white;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            cursor: move;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-            user-select: none;
-            touch-action: none;
-            color: #333;
-        `;
+        const savedPosition = GM_getValue('buttonPosition', { left: '20px', bottom: '20px' });
+        button.style.left = savedPosition.left;
+        button.style.bottom = savedPosition.bottom;
 
         // 添加拖动功能
         let isDragging = false;
@@ -432,16 +420,15 @@
             
             GM_setValue('buttonPosition', {
                 left: button.style.left,
-                top: button.style.top
+                bottom: button.style.bottom
             });
         });
 
         button.addEventListener('click', showMenu);
         
         // 确保按钮被添加到页面
-        if (!document.body.contains(button)) {
-            document.body.appendChild(button);
-        }
+        document.body.appendChild(button);
+        console.log('Floating button created and added to page');
 
         return button;
     }
@@ -1257,36 +1244,64 @@
 
     // 提取主要内容
     function extractMainContent() {
-        // 尝试查找主要内容容器
-        const selectors = [
-            'article',
-            '[role="article"]',
-            '.article',
-            '.post',
-            '.post-content',
-            '.article-content',
-            '#article-content',
-            '.content',
-            '.main-content',
-            'main',
-            '[role="main"]',
-            '.entry-content',
-            '.blog-post',
-            '.story-content'
+        // 针对32r.com的特定选择器
+        const specificSelectors = [
+            '.details_content', // 详情内容区
+            'article',          // 文章区
+            '[role="article"]', // 文章角色
+            '.article-content', // 文章内容
+            '#article-content', // 文章内容ID
+            '.content',        // 内容区
+            '.main-content',   // 主要内容
+            'main',           // 主要区域
+            '[role="main"]'   // 主要区域角色
         ];
 
         let mainContent = null;
         
-        // 查找最匹配的内容容器
-        for (const selector of selectors) {
+        // 首先尝试使用特定选择器
+        for (const selector of specificSelectors) {
             const element = document.querySelector(selector);
             if (element && element.textContent.trim().length > 100) {
-                mainContent = element;
-                break;
+                // 检查内容是否包含导航等不相关内容
+                const navigationText = element.textContent.toLowerCase();
+                if (!navigationText.includes('网站导航') && 
+                    !navigationText.includes('手机版') &&
+                    !navigationText.includes('关于我们')) {
+                    mainContent = element;
+                    break;
+                }
             }
         }
 
-        // 如果没找到合适的容器，使用 body
+        // 如果没找到合适的容器，尝试通过内容密度分析
+        if (!mainContent) {
+            const allElements = document.querySelectorAll('div, article, section');
+            let maxTextDensity = 0;
+            let bestElement = null;
+
+            allElements.forEach(element => {
+                // 计算文本密度（文本长度/HTML长度的比率）
+                const textLength = element.textContent.trim().length;
+                const htmlLength = element.innerHTML.length;
+                const density = textLength / htmlLength;
+
+                // 检查是否包含标题和正文特征
+                const hasTitle = element.querySelector('h1, h2, h3');
+                const hasContent = textLength > 500; // 假设正文至少500字符
+
+                if (density > maxTextDensity && hasTitle && hasContent) {
+                    maxTextDensity = density;
+                    bestElement = element;
+                }
+            });
+
+            if (bestElement) {
+                mainContent = bestElement;
+            }
+        }
+
+        // 如果仍然没找到，使用body作为后备方案
         if (!mainContent) {
             mainContent = document.body;
         }
@@ -1298,7 +1313,7 @@
         // 添加标题
         const title = document.createElement('h1');
         title.style.marginBottom = '20px';
-        title.textContent = document.title;
+        title.textContent = document.title.split('_')[0].split('-')[0].trim(); // 清理标题中的额外文本
         container.appendChild(title);
 
         // 克隆内容
@@ -1310,7 +1325,11 @@
             '.advertisement', '.ads', '.social-share', '.comments',
             '#comments', '.sidebar', '.related-posts', '.nav',
             '.navigation', '.menu', '.share', '.social',
-            'button', 'input', 'form'
+            'button', 'input', 'form', '.web2pdf-floating-button',
+            '.web2pdf-menu', '.pagination', '.breadcrumb',
+            '.category-list', '.tag-list', '.footer', '.header',
+            '.site-nav', '.site-header', '.site-footer',
+            '[role="complementary"]', '[role="navigation"]'
         ];
 
         removeSelectors.forEach(selector => {
@@ -1325,6 +1344,9 @@
         contentClone.querySelectorAll('img').forEach(img => {
             if (img.src) {
                 img.src = img.src; // 确保使用完整URL
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.removeAttribute('srcset'); // 移除响应式图片源
             }
         });
 
@@ -1494,67 +1516,24 @@
 
     // 修改初始化函数
     function initializeExtension() {
-        // 确保只初始化一次
-        if (document.querySelector('.web2pdf-floating-button')) {
-            return;
-        }
-
-        // 确保body存在
-        if (!document.body) {
-            setTimeout(initializeExtension, 100);
-            return;
-        }
-        
         try {
-            // 创建并添加浮动按钮
-            const button = createFloatingButton();
-            
-            // 创建菜单
+            createFloatingButton();
             createMenu();
-            
-            // 添加窗口大小改变事件监听
-            window.addEventListener('resize', function() {
-                if (!button) return;
-
-                const rect = button.getBoundingClientRect();
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-
-                if (rect.right > viewportWidth) {
-                    button.style.left = (viewportWidth - rect.width) + 'px';
-                }
-                if (rect.bottom > viewportHeight) {
-                    button.style.top = (viewportHeight - rect.height) + 'px';
-                }
-
-                GM_setValue('buttonPosition', {
-                    left: button.style.left,
-                    top: button.style.top
-                });
-            });
-
-            console.log('Web2PDF Extension initialized successfully');
+            console.log('Web2PDF initialized successfully');
         } catch (error) {
-            console.error('Error initializing Web2PDF Extension:', error);
+            console.error('Failed to initialize Web2PDF:', error);
         }
     }
 
-    // 确保在页面加载完成后初始化
+    // 等待页面加载完成后初始化
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeExtension);
     } else {
         initializeExtension();
     }
 
-    // 添加 MutationObserver 以处理动态加载的页面
-    const observer = new MutationObserver(function(mutations) {
-        if (!document.querySelector('.web2pdf-floating-button')) {
-            initializeExtension();
-        }
-    });
-
-    observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true
+    // 添加错误处理
+    window.addEventListener('error', function(e) {
+        console.error('Web2PDF error:', e.error);
     });
 })(); 
