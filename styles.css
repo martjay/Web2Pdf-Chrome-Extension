@@ -1,0 +1,548 @@
+/**
+ * Web2PDF Chrome Extension - 样式表
+ */
+
+/* ============================================
+   浮动按钮
+   ============================================ */
+.web2pdf-floating-button {
+  position: fixed;
+  z-index: 10000;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s;
+  user-select: none;
+  touch-action: none;
+  padding: 0;
+}
+
+.web2pdf-floating-button:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.web2pdf-floating-button.dragging {
+  opacity: 0.8;
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.web2pdf-floating-button svg {
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  fill: currentColor;
+}
+
+/* ============================================
+   菜单
+   ============================================ */
+.web2pdf-menu {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 100003;
+  min-width: 180px;
+  max-width: 250px;
+  padding: 8px 0;
+}
+
+.web2pdf-menu.show {
+  display: block;
+}
+
+.menu-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.menu-item:active {
+  background-color: #e8e8e8;
+}
+
+.menu-item svg {
+  flex-shrink: 0;
+  fill: currentColor;
+  opacity: 0.7;
+}
+
+.menu-item#switchLang {
+  border-top: 1px solid #eee;
+}
+
+/* ============================================
+   阅读模式
+   ============================================ */
+.web2pdf-reader-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 100000;
+  padding: 40px;
+  overflow-y: auto;
+  line-height: 1.8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.web2pdf-reader-mode .web2pdf-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+  color: #333;
+}
+
+/* 重置背景色但保留文字颜色 */
+.web2pdf-reader-mode .web2pdf-content,
+.web2pdf-reader-mode .web2pdf-content > * {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* 链接颜色 */
+.web2pdf-reader-mode .web2pdf-content a {
+  color: #1a73e8;
+}
+
+.web2pdf-reader-mode .web2pdf-content a:hover {
+  color: #1557b0;
+}
+
+.web2pdf-reader-mode .web2pdf-floating-button {
+  z-index: 100002;
+}
+
+.web2pdf-reader-mode img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+/* ============================================
+   关闭按钮
+   ============================================ */
+.web2pdf-close-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  z-index: 100001;
+  font-size: 14px;
+  color: #666;
+}
+
+.web2pdf-close-button:hover {
+  background: #f5f5f5;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.web2pdf-close-button:active {
+  transform: scale(0.98);
+}
+
+.web2pdf-close-button svg {
+  width: 20px;
+  height: 20px;
+  color: #666;
+}
+
+/* ============================================
+   编辑模式
+   ============================================ */
+.web2pdf-content.editing {
+  outline: 2px dashed #4CAF50;
+  outline-offset: 10px;
+  padding: 10px;
+}
+
+.editing-toolbar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  z-index: 100002;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 90vw;
+}
+
+.editing-toolbar button {
+  min-width: 32px;
+  height: 32px;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #333;
+  padding: 0 8px;
+}
+
+.editing-toolbar button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.editing-toolbar button:hover {
+  background: #e0e0e0;
+}
+
+.editing-toolbar button:active {
+  background: #d0d0d0;
+  transform: scale(0.95);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: #ddd;
+  margin: 0 4px;
+  align-self: center;
+}
+
+[contenteditable="true"]:focus {
+  outline: none;
+}
+
+/* ============================================
+   元素控制
+   ============================================ */
+.element-controls {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: none;
+  background: rgba(244, 67, 54, 0.9);
+  border-radius: 4px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+[contenteditable="true"] *:hover > .element-controls {
+  display: block;
+}
+
+/* 当菜单显示时，禁用元素控制的 hover 效果 */
+.web2pdf-reader-mode.menu-open [contenteditable="true"] *:hover > .element-controls {
+  display: none !important;
+}
+
+/* 当菜单显示时，禁用图片调整器的 hover 效果 */
+.web2pdf-reader-mode.menu-open [contenteditable="true"] .image-wrapper:hover .image-resizer {
+  display: none !important;
+}
+
+.element-controls button {
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.element-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   图片调整
+   ============================================ */
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.image-resizer {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: #4CAF50;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: se-resize;
+  display: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+[contenteditable="true"] .image-wrapper:hover .image-resizer {
+  display: block;
+}
+
+/* ============================================
+   加载提示
+   ============================================ */
+.web2pdf-loading-tip {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 12px;
+  z-index: 100001;
+  text-align: center;
+  font-size: 14px;
+  min-width: 200px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   打印样式
+   ============================================ */
+@media print {
+  .web2pdf-floating-button,
+  .web2pdf-menu,
+  .web2pdf-close-button,
+  .editing-toolbar,
+  .element-controls,
+  .image-resizer {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   子菜单
+   ============================================ */
+.menu-item.has-submenu {
+  position: relative;
+}
+
+.menu-item.has-submenu > .arrow {
+  margin-left: auto;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.menu-item.has-submenu > .submenu {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  z-index: 100004;
+  padding: 8px 0;
+}
+
+/* 子菜单由 JS 控制显示，不使用 CSS hover */
+
+.menu-item.has-submenu > .submenu > .menu-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.menu-item.has-submenu > .submenu > .menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* 当菜单靠近右边缘时，子菜单显示在左侧 */
+.web2pdf-menu.submenu-left .menu-item.has-submenu > .submenu {
+  left: auto;
+  right: 100%;
+}
+
+
+/* ============================================
+   颜色选择器
+   ============================================ */
+.color-picker-popup {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  width: 280px;
+  font-size: 13px;
+}
+
+.color-picker-header {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.color-picker-presets {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.color-preset {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.color-preset:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  position: relative;
+}
+
+.color-preset[data-color="#ffffff"] {
+  border: 1px solid #ccc;
+}
+
+.color-picker-custom {
+  margin-bottom: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.color-picker-custom label {
+  display: block;
+  margin-bottom: 6px;
+  color: #666;
+  font-size: 12px;
+}
+
+.color-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-input-picker {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  background: white;
+}
+
+.color-input-picker::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-input-picker::-webkit-color-swatch {
+  border-radius: 2px;
+  border: none;
+}
+
+.color-input-text {
+  flex: 1;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.color-input-text:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.color-apply-btn {
+  height: 32px;
+  padding: 0 12px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.color-apply-btn:hover {
+  background: #45a049;
+}
+
+.color-picker-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.color-cancel-btn,
+.color-clear-btn {
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.color-cancel-btn:hover {
+  background: #f5f5f5;
+}
+
+.color-clear-btn {
+  color: #f44336;
+  border-color: #f44336;
+}
+
+.color-clear-btn:hover {
+  background: #fff5f5;
+}

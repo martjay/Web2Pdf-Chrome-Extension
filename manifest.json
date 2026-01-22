@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Web2PDF",
+  "version": "1.0.0",
+  "description": "将网页转换为PDF，支持阅读模式、编辑模式和多语言",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "Web2PDF - 网页转PDF"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "lib/html2pdf.bundle.min.js",
+        "lib/docx.min.js",
+        "lib/FileSaver.min.js",
+        "i18n.js",
+        "content.js"
+      ],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ]
+}

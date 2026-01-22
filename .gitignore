@@ -1,0 +1,13 @@
+# 忽略的文件夹
+.specstory/
+备份/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
